@@ -1,0 +1,66 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\{{modelName}};
+use Illuminate\Http\Request;
+
+class {{modelName}}Controller extends Controller
+{
+    public function index(Request $request)
+    {
+        $query = {{modelName}}::query();
+
+        // Logika Pencarian: Mencari di kolom pertama (biasanya Nama/Judul)
+        if ($request->has('search') && $request->search != '') {
+            $query->where('{{searchableField}}', 'like', '%' . $request->search . '%');
+        }
+
+        // Pagination: Menampilkan 10 data per halaman
+        ${{modelNamePlural}} = $query->latest()->paginate(10);
+
+        return view('{{modelNamePlural}}.index', compact('{{modelNamePlural}}'));
+    }
+
+    public function create()
+    {
+        return view('{{modelPath}}.create');
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            {{validationRules}}
+        ]);
+
+        {{modelName}}::create($request->all());
+
+        return redirect()->route('{{modelNamePlural}}.index')
+                        ->with('success', 'Data berhasil ditambahkan!');
+    }
+
+    public function edit($id)
+    {
+        ${{modelNameSingular}} = {{modelName}}::findOrFail($id);
+        return view('{{modelPath}}.edit', compact('{{modelNameSingular}}'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        ${{modelNameSingular}} = {{modelName}}::findOrFail($id);
+        ${{modelNameSingular}}->update($request->all());
+
+        return redirect()->route('{{modelNamePlural}}.index')
+                         ->with('success', 'Data berhasil diubah!');
+    }
+
+    public function destroy($id)
+    {
+        ${{modelNameSingular}} = {{modelName}}::findOrFail($id);
+        ${{modelNameSingular}}->delete();
+
+        return redirect()->route('{{modelNamePlural}}.index')
+                         ->with('success', 'Data berhasil dihapus!');
+    }
+
+}
