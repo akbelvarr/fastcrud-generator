@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class {{modelName}} extends Model
 {
     use HasFactory;
+    // {{extraTraits}}
 
-    protected $guarded = [];
+    protected $fillable = [{{fillable}}];
+    // {{extraProps}}
 }

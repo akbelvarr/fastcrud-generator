@@ -3,18 +3,21 @@
 @section('content')
 <div class="row justify-content-center">
     <div class="col-md-8">
-        <div class="card shadow-sm border-0">
-            <div class="card-header bg-white py-3">
-                <h5 class="m-0 font-weight-bold text-primary">Tambah {{modelName}} Baru</h5>
+        <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-header bg-white py-3 border-bottom-0 pt-4 pb-0 d-flex justify-content-between align-items-center">
+                <h5 class="m-0 font-weight-bold text-dark fs-5">Tambah {{modelName}} Baru</h5>
             </div>
-            <div class="card-body">
-                <form action="{{ route('{{modelNamePlural}}.store') }}" method="POST">
+            <div class="card-body p-4">
+                <form action="{{ route('{{modelNamePlural}}.store') }}" method="POST" {{enctype}}>
                     @csrf
+                    
                     {{formFields}}
-                    <hr>
-                    <div class="d-flex justify-content-between">
-                        <a href="{{ route('{{modelNamePlural}}.index') }}" class="btn btn-light text-secondary">Kembali</a>
-                        <button type="submit" class="btn btn-primary px-4">Simpan Data</button>
+                    
+                    <div class="mt-4 pt-3 border-top d-flex justify-content-end gap-2">
+                        <a href="{{ route('{{modelNamePlural}}.index') }}" class="btn btn-light border px-4 text-secondary">Batal</a>
+                        <button type="submit" class="btn btn-primary px-4 shadow-sm">
+                            <i class="bi bi-save me-1"></i> Simpan
+                        </button>
                     </div>
                 </form>
             </div>

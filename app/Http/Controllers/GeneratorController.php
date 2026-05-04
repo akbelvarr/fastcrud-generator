@@ -13,29 +13,46 @@ class GeneratorController extends Controller
         return view('generator.index');
     }
 
-    // Memproses input dari form
     public function generate(Request $request)
-{
-    $request->validate([
-        'model_name' => 'required|alpha',
-        'field_names' => 'required|array',
-        'field_types' => 'required|array'
-    ]);
+    {
+        $request->validate([
+            'model_name' => 'required|alpha',
+            'field_names' => 'required|array',
+            'field_types' => 'required|array'
+        ]);
 
-    // Menggabungkan array name dan type menjadi format "name:type,price:integer"
-    $fieldsArray = [];
-    foreach ($request->field_names as $index => $name) {
-        $type = $request->field_types[$index];
-        $fieldsArray[] = "$name:$type";
+        $fieldsArray = [];
+        foreach ($request->field_names as $index => $name) {
+            $type = $request->field_types[$index];
+            $fieldsArray[] = "$name:$type";
+        }
+
+        $options = [];
+        if ($request->has('timestamps')) {
+            $options['timestamps'] = true;
+        }
+
+        if ($request->has('softdeletes')) {
+            $options['softdeletes'] = true;
+        }
+
+        // Generate files in temporary location and zip them
+        $zipService = new \App\Services\ZipGeneratorService();
+        $fileName = $zipService->generateZip($request->model_name, $fieldsArray, $options);
+
+        // Return a success view
+        $modelName = ucfirst(\Illuminate\Support\Str::studly($request->model_name));
+        return view('generator.output', compact('fileName', 'modelName'))->with('success', "CRUD {$modelName} berhasil di-generate!");
     }
-    $fieldsString = implode(',', $fieldsArray);
 
-    // Panggil command yang sudah kita buat sebelumnya
-    Artisan::call('make:mycrud', [
-        'name' => $request->model_name,
-        '--fields' => $fieldsString
-    ]);
+    public function download($fileName)
+    {
+        $filePath = storage_path('app/temp_cruds/' . $fileName);
+        
+        if (!file_exists($filePath)) {
+            abort(404, 'File ZIP tidak ditemukan atau sudah kadaluarsa.');
+        }
 
-    return back()->with('success', "CRUD {$request->model_name} berhasil di-generate secara visual!");
-}
+        return response()->download($filePath)->deleteFileAfterSend(true);
+    }
 }
