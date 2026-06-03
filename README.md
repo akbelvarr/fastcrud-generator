@@ -24,7 +24,7 @@ FastCRUD adalah tools generator CRUD berbasis web yang dikembangkan menggunakan 
 ### 1. Clone Repository
 
 ```bash
-git clone http://github.com/akbelvarr/fastcrud-generator
+git clone https://github.com/akbelvarr/fastcrud-generator.git
 ```
 
 ### 2. Masuk Folder Project
