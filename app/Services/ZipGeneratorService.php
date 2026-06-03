@@ -205,7 +205,7 @@ class ZipGeneratorService
         $template = str_replace(
             ['{{tableName}}', '// {{fieldPenanda}}'],
             [$tableName, trim($migrationFields)],
-            File::get(base_path('stubs/migration.stub'))
+            File::get(base_path('stubs/Migration.stub'))
         );
 
         File::put($this->tempDir . "/database/migrations/{$fileName}", $template);
